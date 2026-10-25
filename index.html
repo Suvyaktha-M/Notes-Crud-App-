@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes Dashboard</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="page-header">
+            <div>
+                <p class="eyebrow">YOUR PERSONAL SPACE</p>
+                <h1>My Notes<span class="dot">.</span></h1>
+                <p class="subtitle">Keep your thoughts organized.</p>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">{{ total }}</span>
+                <span class="stat-label">Total notes</span>
+            </div>
+        </header>
+        <section class="panel">
+            <h2>Create a note</h2>
+            <form action="{{ url_for('add_note') }}" method="POST">
+                <label for="title">Title</label>
+                <input id="title" type="text" name="title"
+                       placeholder="Give your note a title" required>
+                <label for="content">Content</label>
+                <textarea id="content" name="content"
+                          placeholder="What's on your mind?" required></textarea>
+                <label for="new-category">Category</label>
+                <select id="new-category" name="category">
+                    {% for cat in categories %}
+                    <option value="{{ cat }}">{{ cat }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">+ Add Note</button>
+            </form>
+        </section>
+        <section class="notes-section">
+            <div class="section-heading">
+                <div>
+                    <h2>Your collection</h2>
+                    <p class="subtitle">Find and manage your notes.</p>
+                </div>
+                <span class="count">{{ notes|length }} shown</span>
+            </div>
+            <form class="search-panel" action="{{ url_for('home') }}"
+                  method="GET">
+                <input type="search" name="q" value="{{ search }}"
+                       placeholder="Search titles and content...">
+                <select name="category" aria-label="Filter by category">
+                    <option value="">All categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}"
+                        {% if selected_category == cat %}selected{% endif %}>
+                        {{ cat }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Search</button>
+                <a class="reset-link" href="{{ url_for('home') }}">Reset</a>
+            </form>
+            {% if notes %}
+            <div class="notes-grid">
+                {% for note in notes %}
+                <article class="note-card">
+                    <div class="note-top">
+                        <span class="category-tag
+                            category-{{ note['category']|lower }}">
+                            {{ note['category'] }}
+                        </span>
+                    </div>
+                    <h3>{{ note['title'] }}</h3>
+                    <p class="note-content">{{ note['content'] }}</p>
+                    <div class="timestamps">
+                        <span>Created: {{ note['created_at'] }}</span>
+                        {% if note['updated_at'] != note['created_at'] %}
+                        <span>Updated: {{ note['updated_at'] }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="note-actions">
+                        <a class="edit-link"
+                           href="{{ url_for('edit_note', note_id=note['id']) }}">
+                            Edit note
+                        </a>
+                        <form action="{{ url_for('delete_note', note_id=note['id']) }}"
+                              method="GET">
+                            <button class="delete-button" type="submit">Delete</button>
+                        </form>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <h3>No notes found</h3>
+                <p>
+                    {% if search or selected_category %}
+                    Try another search or category.
+                    {% else %}
+                    Add your first note to get started.
+                    {% endif %}
+                </p>
+                {% if search or selected_category %}
+                <a href="{{ url_for('home') }}">Clear filters</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </section>
+        <footer>Made with care · Your notes, your space.</footer>
+    </div>
+</body>
+</html>

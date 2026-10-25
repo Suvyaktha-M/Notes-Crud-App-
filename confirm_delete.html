@@ -1,0 +1,32 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Delete</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container edit-container">
+        <section class="panel">
+            <p class="eyebrow">CONFIRM ACTION</p>
+            <h1>Delete this note?</h1>
+            <p>Are you sure you want to delete
+                <strong>{{ note['title'] }}</strong>?
+            </p>
+            <p class="subtitle">This action cannot be undone.</p>
+            <form action="{{ url_for('delete_note', note_id=note['id']) }}"
+                  method="POST">
+                <button type="submit" class="delete-button">
+                    Yes, delete note
+                </button>
+                <a class="cancel-link" href="{{ url_for('home') }}">
+                    Cancel
+                </a>
+            </form>
+        </section>
+    </div>
+</body>
+</html>

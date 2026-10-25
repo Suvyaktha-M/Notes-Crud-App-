@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Note</title>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container edit-container">
+        <a class="back-link" href="{{ url_for('home') }}">
+            &larr; Back to notes
+        </a>
+        <header class="edit-header">
+            <p class="eyebrow">UPDATE YOUR THOUGHTS</p>
+            <h1>Edit note<span class="dot">.</span></h1>
+            <p class="subtitle">Make your changes below.</p>
+        </header>
+        <section class="panel">
+            <form action="{{ url_for('edit_note', note_id=note['id']) }}"
+                  method="POST">
+                <label for="title">Title</label>
+                <input id="title" type="text" name="title"
+                       value="{{ note['title'] }}" required>
+                <label for="content">Content</label>
+                <textarea id="content" name="content"
+                          required>{{ note['content'] }}</textarea>
+                <label for="category">Category</label>
+                <select id="category" name="category">
+                    {% for cat in categories %}
+                    <option value="{{ cat }}"
+                        {% if note['category'] == cat %}selected{% endif %}>
+                        {{ cat }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <div class="timestamps edit-timestamps">
+                    <span>Created: {{ note['created_at'] }}</span>
+                    <span>Last updated: {{ note['updated_at'] }}</span>
+                </div>
+                <div class="form-actions">
+                    <button type="submit">Save changes</button>
+                    <a class="cancel-link" href="{{ url_for('home') }}">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </section>
+    </div>
+</body>
+</html>
